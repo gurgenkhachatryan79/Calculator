@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Calculator
 {
@@ -8,23 +10,75 @@ namespace Calculator
         public static void Start()
         {
             string input = null;
+            double first = 0;
+            string operand = null;
+           
             do
             {
+                
                 input = Console.ReadLine();
-                double first = Convert.ToDouble(input[0].ToString());
-                string operand = input[1].ToString();
-                double second = Convert.ToDouble(input[2].ToString());
+                char[] inputarray = input.ToCharArray();
+                bool flag = false;
+                double second = 0;
 
-                Func<string, IOperation> func = null;
-                func +=GetOperation;
+
+                foreach (var item in inputarray)
+                {
+                    if (item == '=') { break; }   
+
+                        if (item >= '0' && item <= '9')
+                        {
+                            if (flag == false)
+                            {
+                                if (first != 0) { first = first * 10 + Convert.ToDouble(item.ToString()); }
+                                else { first = Convert.ToDouble(item.ToString()); }
+                            }
+                            else
+                            {
+                                if (second != 0) { second = second * 10 + Convert.ToDouble(item.ToString()); }
+                                else { second = Convert.ToDouble(item.ToString()); }
+
+                            }
+                        }
+                        else
+                        { operand = item.ToString(); flag = true; }
+                   
+                }
+                Func<string, IOperation> func=null;
+                //   List<IOperation> operations=null;
+                //   var operation= GetOperation(operand);
+                //    operations.Add(operation);     
+                func += GetOperation;
                 Calculator calculator = new Calculator(func);
-                calculator.Calculate(operand, first, second);
+                first=calculator.Calculate(operand, first, second);
             }
             while (input != "e");
-
+           
         }
+      
         public static IOperation GetOperation(string operand)
         {
+            Assembly assembly = null;
+            try
+            { 
+                assembly = Assembly.LoadFrom(@"C:\Users\Toshiba\Desktop\CalculatorAddition\ModulOperation\ModulOperation\bin\Debug\net5.0\ModulOperation.dll");
+                Console.WriteLine("dll is created");
+                Type type = assembly.GetType("ModulOperation.ModOperation");
+                Console.WriteLine("type=" + type);
+
+                object instance = Activator.CreateInstance(type) as IOperation;
+                if (instance == null) { Console.WriteLine("instance is null"); }
+               
+              
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+
+
+
             switch (operand)
             {
                 case "+":
@@ -42,6 +96,12 @@ namespace Calculator
                 case "/":
                     {
                         return new DivideOperation();
+                    }
+                case "%":
+                    {
+                       // Console.WriteLine(type.GetMethod("ModulOpperation").Name);
+                        //  return new Activator.CreateInstance(type) as IOperation; 
+                        break;
                     }
                 default:
                     {

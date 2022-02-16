@@ -8,16 +8,14 @@ namespace Calculator
 {
     class DivideOperation : IOperation
     {
-        public double Operation<T>(T firstelement, T secondelement)
+        public double Operation(double firstelement, double secondelement)
         {
-            double dfirstelement = Convert.ToDouble(firstelement);
-            double dsecondelement = Convert.ToDouble(secondelement);
-            if (dsecondelement == 0)
+            if (secondelement == 0)
             {
                 Console.WriteLine("the number cannot be divided by 0");
                 throw new DivideByZeroException();
             }
-            return dfirstelement / dsecondelement;
+            return firstelement / secondelement;
         }
     }
 }

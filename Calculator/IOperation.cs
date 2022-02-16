@@ -2,6 +2,6 @@
 {
     interface IOperation
     {
-        double Operation<T>(T firstelement, T secondelement);
+        double Operation(double firstelement, double secondelement);
     }
 }
